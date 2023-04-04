@@ -123,8 +123,9 @@ public abstract class JavaLibraryPlugin implements Plugin<Project> {
         project.getPluginManager().apply("ng.org.gradle.java-language");
 
         Model model = project.getExtensions().getByType(Model.class);
-        model.getComponents().withType(LibraryComponent.class).named(project.getName(), component -> {
+        model.getNgComponents().withType(LibraryComponent.class).named(project.getName(), component -> {
             component.getFeatures().withType(JvmLibraryFeature.class).configureEach(feature -> {
+                // By convention, we target JDK8 and JDK15
                 feature.getTargetJdks().convention(Arrays.asList(8, 15));
             });
         });

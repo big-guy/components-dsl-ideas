@@ -8,7 +8,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 
 public interface JvmTarget extends Target {
-    Property<Integer> getTargetJdks();
+    Property<Integer> getTargetJdk();
 
     ExtensiblePolymorphicDomainObjectContainer<JvmSourceSet> getSources();
 

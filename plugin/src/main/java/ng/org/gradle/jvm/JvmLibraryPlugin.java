@@ -18,15 +18,31 @@ public abstract class JvmLibraryPlugin implements Plugin<Project> {
     public void apply(Project project) {
         project.getPluginManager().apply("ng.org.gradle.software-library");
         Model model = project.getExtensions().getByType(Model.class);
-        model.getComponents().withType(LibraryComponent.class).named(project.getName(), component -> {
+
+        // Rules apply to all components
+        model.getNgComponents().withType(Component.class).configureEach(component -> {
+            // Every component can have a JvmLibraryFeature registered
             component.getFeatures().registerBinding(JvmLibraryFeature.class, JvmLibraryFeature.class);
-            component.getFeatures().register("main", JvmLibraryFeature.class);
-        });
-        model.getComponents().withType(Component.class).configureEach(component -> {
+
             component.getFeatures().withType(JvmLibraryFeature.class).configureEach(feature -> {
+                // Every JvmLibraryFeature can have JvmLibraryTargets registered
                 feature.getTargets().registerBinding(JvmLibraryTarget.class, JvmLibraryTarget.class);
-                feature.getTargets().addAllLater(feature.getTargetJdks().map(jdks -> jdks.stream().map(jdk -> feature.getTargets().create(feature.getName() + jdk, JvmLibraryTarget.class)).collect(Collectors.toList())));
+
+                // TODO: How does one override this so that we don't create JvmLibraryTargets?
+                // By convention, a JvmLibraryFeature has one JvmLibraryTarget for each target JDK
+                feature.getTargets().addAllLater(feature.getTargetJdks().map(jdks -> {
+                    return jdks.stream().map(jdk -> {
+                        return feature.getTargets().create(feature.getName() + jdk, JvmLibraryTarget.class, target -> {
+                            target.getTargetJdk().convention(jdk);
+                        });
+                    }).collect(Collectors.toList());
+                }));
             });
+        });
+
+        // Rule only applies to the main component
+        model.getNgComponents().withType(LibraryComponent.class).named(project.getName(), component -> {
+            component.getFeatures().register("main", JvmLibraryFeature.class);
         });
     }
 }

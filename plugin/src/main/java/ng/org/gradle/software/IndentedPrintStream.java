@@ -24,5 +24,8 @@ public class IndentedPrintStream extends PrintStream {
 
     public void dedent() {
         indent--;
+        if (indent < 0) {
+            throw new IllegalStateException("too many dedents");
+        }
     }
 }
