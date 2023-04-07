@@ -27,7 +27,7 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
         components.registerBinding(LibraryComponent.class, LibraryComponent.class);
 
         // TODO: force the realization of everything
-        /*project.afterEvaluate(p -> {
+        project.afterEvaluate(p -> {
             model.getNgComponents().all(component -> {
                 component.getFeatures().all(feature -> {
                     feature.getTargets().all(target -> {
@@ -37,7 +37,7 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
                     });
                 });
             });
-        });*/
+        });
 
         project.getTasks().register("printModel", t -> {
             t.doLast(task -> {
