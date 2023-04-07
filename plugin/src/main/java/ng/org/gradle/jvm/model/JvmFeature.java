@@ -1,6 +1,5 @@
 package ng.org.gradle.jvm.model;
 
-import ng.org.gradle.java.model.JvmDependencies;
 import ng.org.gradle.software.model.Feature;
 import org.gradle.api.Action;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;

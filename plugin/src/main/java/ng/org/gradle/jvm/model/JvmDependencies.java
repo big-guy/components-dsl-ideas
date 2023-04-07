@@ -1,4 +1,4 @@
-package ng.org.gradle.java.model;
+package ng.org.gradle.jvm.model;
 
 import org.gradle.api.provider.ListProperty;
 

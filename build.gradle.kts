@@ -6,6 +6,14 @@ plugins {
    id("ng.org.gradle.java-library")
 }
 
+library {
+   sources {
+      "java" {
+
+      }
+   }
+}
+
 ng {
    ngComponents {
       "foo"(LibraryComponent::class) {

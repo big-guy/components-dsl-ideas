@@ -28,6 +28,10 @@ gradlePlugin {
             id = 'ng.org.gradle.jvm-library'
             implementationClass = 'ng.org.gradle.jvm.JvmLibraryPlugin'
         }
+        jvmBase {
+            id = 'ng.org.gradle.jvm-base'
+            implementationClass = 'ng.org.gradle.jvm.JvmBasePlugin'
+        }
         jvmEcosystem {
             id = 'ng.org.gradle.jvm-ecosystem'
             implementationClass = 'ng.org.gradle.jvm.JvmEcosystemPlugin'
@@ -43,6 +47,10 @@ gradlePlugin {
         javaLanguage {
             id = 'ng.org.gradle.java-language'
             implementationClass = 'ng.org.gradle.java.JavaLanguagePlugin'
+        }
+        javaLanguageBase {
+            id = 'ng.org.gradle.java-language-base'
+            implementationClass = 'ng.org.gradle.java.JavaLanguageBasePlugin'
         }
     }
 }

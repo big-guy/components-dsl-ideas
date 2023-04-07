@@ -1,10 +1,15 @@
 package ng.org.gradle.software;
 
+import ng.org.gradle.java.model.JavaApi;
+import ng.org.gradle.java.model.JavaDocs;
+import ng.org.gradle.java.model.JavaSources;
 import ng.org.gradle.jvm.model.JvmFeature;
+import ng.org.gradle.jvm.model.JvmRuntime;
 import ng.org.gradle.jvm.model.JvmTarget;
 import ng.org.gradle.software.model.Component;
 import ng.org.gradle.software.model.LibraryComponent;
 import ng.org.gradle.software.model.Model;
+import ng.org.gradle.software.model.Variant;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -17,7 +22,8 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
     public void apply(Project project) {
         Model model = project.getExtensions().create(Model.class, "ng", Model.class);
         ExtensiblePolymorphicDomainObjectContainer<Component> components = model.getNgComponents();
-        // TODO: Should be register as part of SoftwareLibrary or a base SoftwareLibrary plugin?
+
+        //
         components.registerBinding(LibraryComponent.class, LibraryComponent.class);
 
         project.getTasks().register("printModel", t -> {
@@ -96,6 +102,9 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
                                 }
                                 out.dedent();
 
+                                ((JvmTarget) target).getVariants().forEach(variant -> {
+                                    renderVariant(out, variant);
+                                });
                             }
                             out.dedent();
                             out.println("}");
@@ -103,11 +112,7 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
                         out.dedent();
                         out.indent();
                         feature.getVariants().forEach(variant -> {
-                            out.println("Variant: " + variant.getName() + " {");
-                            out.indent();
-                            out.println(variant);
-                            out.dedent();
-                            out.println("}");
+                            renderVariant(out, variant);
                         });
                         out.dedent();
                         out.println("}");
@@ -117,5 +122,23 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
                 });
             });
         });
+    }
+
+    private void renderVariant(IndentedPrintStream out, Variant variant) {
+        out.println("Variant: " + variant.getName() + " {");
+        out.indent();
+        if (variant instanceof JavaApi) {
+
+        } else if (variant instanceof JvmRuntime) {
+
+        } else if (variant instanceof JavaSources) {
+
+        } else if (variant instanceof JavaDocs) {
+
+        } else {
+            out.println(variant);
+        }
+        out.dedent();
+        out.println("}");
     }
 }

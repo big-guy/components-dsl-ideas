@@ -3,13 +3,18 @@
  */
 package ng.org.gradle.java;
 
+import ng.org.gradle.java.model.JavaApi;
+import ng.org.gradle.java.model.JavaDocs;
+import ng.org.gradle.java.model.JavaSources;
 import ng.org.gradle.jvm.model.JvmLibraryFeature;
+import ng.org.gradle.jvm.model.JvmLibraryTarget;
 import ng.org.gradle.software.model.LibraryComponent;
 import ng.org.gradle.software.model.Model;
 import org.gradle.api.Project;
 import org.gradle.api.Plugin;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /*
 Component
@@ -64,6 +69,29 @@ Maybe later
 // foo/build.gradle
 // apply java-library
 
+library {
+    main {
+        targetJdks = [ 8, 15 ]
+        sources {
+            java {
+                srcDir "src/other-main/java"
+            }
+        }
+        dependencies {
+            api "..."
+            implementation "..."
+        }
+        targets {
+            main8 {
+                dependencies {
+                    api "..."
+                    implementation "..."
+                }
+            }
+        }
+    }
+}
+
 components {
     foo(LibraryComponent) {
         features {
@@ -111,6 +139,33 @@ components {
     }
 }
 
+java-library today:
+- java {} extension
+- sourceSets.main
+- sourceSets.main.java
+- api, implementation, compileOnly, runtimeOnly
+- compileClasspath
+- runtimeClasspath
+- annotationProcessor
+- compileJava
+- processResources
+- classes lifecycle
+- javadoc
+- apiElements
+    - jar
+    - secondary: classes
+- runtimeElements
+    - jar
+    - secondary: classes
+    - secondary: resources
+- mainSourceElements
+    - only directories
+- sourcesElements (optional)
+    - sourcesJar
+- javadocElements (optional)
+    - javadocJar
+- things related to tests (ignore this for now)
+
  */
 /**
  * A simple 'hello world' plugin.
@@ -127,6 +182,14 @@ public abstract class JavaLibraryPlugin implements Plugin<Project> {
             component.getFeatures().withType(JvmLibraryFeature.class).configureEach(feature -> {
                 // By convention, we target JDK8 and JDK15
                 feature.getTargetJdks().convention(Arrays.asList(8, 15));
+
+                // Each library target produces a JavaApi, JavaSources and Javadoc
+                // TODO: Should only do this if there are Java sources?
+                feature.getTargets().configureEach(target -> {
+                    target.getVariants().register(target.nameOf("apiElements"), JavaApi.class);
+                    target.getVariants().register(target.nameOf("javadocElements"), JavaDocs.class);
+                    target.getVariants().register(target.nameOf("sourcesElements"), JavaSources.class);
+                });
             });
         });
     }

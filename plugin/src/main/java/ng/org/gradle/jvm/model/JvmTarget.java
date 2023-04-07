@@ -1,6 +1,5 @@
 package ng.org.gradle.jvm.model;
 
-import ng.org.gradle.java.model.JvmDependencies;
 import ng.org.gradle.software.model.Target;
 import org.gradle.api.Action;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
@@ -17,5 +16,11 @@ public interface JvmTarget extends Target {
 
     default void dependencies(Action<? super JvmDependencies> action) {
         action.execute(getDependencies());
+    }
+
+    ExtensiblePolymorphicDomainObjectContainer<JvmVariant> getVariants();
+
+    default String nameOf(String name) {
+        return name + getName();
     }
 }
