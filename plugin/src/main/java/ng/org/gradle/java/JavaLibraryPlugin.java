@@ -168,9 +168,7 @@ java-library today:
 
  */
 /**
- * A simple 'hello world' plugin.
- * java-library = software-library + jvm-library + jvm-ecosystem + java-language
- * java-library adds java extension to sources adds JavaApi variants?
+ *
  */
 public abstract class JavaLibraryPlugin implements Plugin<Project> {
     public void apply(Project project) {

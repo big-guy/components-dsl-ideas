@@ -29,7 +29,13 @@ public abstract class JavaLanguageBasePlugin implements Plugin<Project> {
                     target.getVariants().registerBinding(JavaApi.class, JavaApi.class);
                     target.getVariants().registerBinding(JavaDocs.class, JavaDocs.class);
                     target.getVariants().registerBinding(JavaSources.class, JavaSources.class);
+
+                    target.getSources().withType(JavaSourceSet.class).configureEach(sourceSet -> {
+                        // TODO: Capitalize
+                        // project.getTasks().register("compile" + sourceSet.getName())
+                    });
                 });
+
             });
         });
     }

@@ -18,5 +18,4 @@ public interface JvmFeature extends Feature {
 
     ExtensiblePolymorphicDomainObjectContainer<JvmSourceSet> getSources();
     ExtensiblePolymorphicDomainObjectContainer<JvmTarget> getTargets();
-    ExtensiblePolymorphicDomainObjectContainer<JvmVariant> getVariants();
 }

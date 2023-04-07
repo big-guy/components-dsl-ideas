@@ -1,6 +1,7 @@
 package ng.org.gradle.jvm;
 
 import ng.org.gradle.jvm.model.JvmFeature;
+import ng.org.gradle.jvm.model.JvmRuntime;
 import ng.org.gradle.software.model.Component;
 import ng.org.gradle.software.model.Model;
 import org.gradle.api.Named;
@@ -21,12 +22,6 @@ public abstract class JvmEcosystemPlugin implements Plugin<Project> {
         // Rules to apply to all components with JvmFeatures
         model.getNgComponents().withType(Component.class).configureEach(component -> {
             component.getFeatures().withType(JvmFeature.class).configureEach(feature -> {
-                // All variants for each target are also available at the feature level
-                // TODO: Target variant names need to be globally unique
-                // TODO: How do we do this more elegantly?
-                // TODO: How do we prevent additions to the feature variants list? this should probably be immutable
-                feature.getVariants().addAllLater(project.provider(() -> feature.getTargets().stream().flatMap(target -> target.getVariants().stream()).collect(Collectors.toList())));
-
                 // set conventions for source sets in a JVM feature
                 feature.getSources().configureEach(sourceSet -> {
                     sourceSet.srcDir("src/" + feature.getName() + "/" + sourceSet.getName());

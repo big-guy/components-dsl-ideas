@@ -26,6 +26,19 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
         //
         components.registerBinding(LibraryComponent.class, LibraryComponent.class);
 
+        // TODO: force the realization of everything
+        /*project.afterEvaluate(p -> {
+            model.getNgComponents().all(component -> {
+                component.getFeatures().all(feature -> {
+                    feature.getTargets().all(target -> {
+                        target.getVariants().all(variant -> {
+
+                        });
+                    });
+                });
+            });
+        });*/
+
         project.getTasks().register("printModel", t -> {
             t.doLast(task -> {
                 IndentedPrintStream out = new IndentedPrintStream(System.out);
@@ -108,11 +121,6 @@ public abstract class SoftwareComponentPlugin implements Plugin<Project> {
                             }
                             out.dedent();
                             out.println("}");
-                        });
-                        out.dedent();
-                        out.indent();
-                        feature.getVariants().forEach(variant -> {
-                            renderVariant(out, variant);
                         });
                         out.dedent();
                         out.println("}");
