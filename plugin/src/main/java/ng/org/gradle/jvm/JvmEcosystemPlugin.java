@@ -50,6 +50,10 @@ public abstract class JvmEcosystemPlugin implements Plugin<Project> {
                         // TODO: better way to do this above
                         sourceSet.getSrcDirs().from(feature.getSources().matching(other -> other.getName().equals(sourceSet.getName())));
                     });
+
+                    target.getVariants().withType(JvmRuntime.class).configureEach(variant -> {
+
+                    });
                 });
             });
         });

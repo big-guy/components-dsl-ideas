@@ -7,6 +7,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 
 public interface JvmTarget extends Target {
+    // TODO: should be a proper type
     Property<Integer> getTargetJdk();
 
     ExtensiblePolymorphicDomainObjectContainer<JvmSourceSet> getSources();
@@ -22,5 +23,9 @@ public interface JvmTarget extends Target {
 
     default String nameOf(String name) {
         return name + getName();
+    }
+
+    default void compilation(Action<? super JvmCompilation> action) {
+        getVariants().withType(JvmCompilation.class).configureEach(action);
     }
 }

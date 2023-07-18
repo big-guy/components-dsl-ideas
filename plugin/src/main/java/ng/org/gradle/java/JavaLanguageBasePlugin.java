@@ -9,6 +9,15 @@ import ng.org.gradle.software.model.Component;
 import ng.org.gradle.software.model.Model;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.internal.ConventionMapping;
+import org.gradle.api.internal.tasks.compile.JavaCompileExecutableUtils;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.plugins.internal.JvmPluginsHelper;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavaToolchainService;
+import org.gradle.jvm.toolchain.JavaToolchainSpec;
 
 public abstract class JavaLanguageBasePlugin implements Plugin<Project> {
     @Override
@@ -32,7 +41,33 @@ public abstract class JavaLanguageBasePlugin implements Plugin<Project> {
 
                     target.getSources().withType(JavaSourceSet.class).configureEach(sourceSet -> {
                         // TODO: Capitalize
-                        // project.getTasks().register("compile" + sourceSet.getName())
+                        project.getTasks().register("compile" + sourceSet.getName(), JavaCompile.class, task -> {
+                            ConventionMapping conventionMapping = task.getConventionMapping();
+
+                            // TODO: This should be more human-readable or have a display name derived from target + source set
+                            task.setDescription("Compiles " + sourceSet.getName() + " sources for " + target.getName() + ".");
+                            task.source(sourceSet.getSrcDirs());
+
+                            // conventionMapping.map("classpath", sourceSet::getCompileClasspath);
+
+                            // TODO: Modified from
+                            //  JvmPluginsHelper.configureAnnotationProcessorPath(sourceSet, javaSource, task.getOptions(), project);
+                            conventionMapping.map("annotationProcessorPath", () -> project.getObjects().fileCollection());
+                            String annotationProcessorGeneratedSourcesChildPath = "generated/sources/annotationProcessor/" + sourceSet.getName() + "/" + feature.getName();
+                            task.getOptions().getGeneratedSourceOutputDirectory().convention(project.getLayout().getBuildDirectory().dir(annotationProcessorGeneratedSourcesChildPath));
+
+                            // TODO: This needs to honor Java extension and executable overrides?
+                            JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
+                            task.getJavaCompiler().convention(service.compilerFor(spec -> {
+                                spec.getLanguageVersion().convention(target.getTargetJdk().map(JavaLanguageVersion::of));
+                            }));
+
+                            String generatedHeadersDir = "generated/sources/headers/" + sourceSet.getName() + "/" + feature.getName();
+                            task.getOptions().getHeaderOutputDirectory().convention(project.getLayout().getBuildDirectory().dir(generatedHeadersDir));
+
+                            // TODO:
+                            task.getModularity().getInferModulePath().convention(false);
+                        });
                     });
                 });
 

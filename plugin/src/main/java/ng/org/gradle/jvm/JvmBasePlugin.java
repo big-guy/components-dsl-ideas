@@ -1,5 +1,6 @@
 package ng.org.gradle.jvm;
 
+import ng.org.gradle.jvm.model.JvmCompilation;
 import ng.org.gradle.jvm.model.JvmFeature;
 import ng.org.gradle.jvm.model.JvmLibraryFeature;
 import ng.org.gradle.jvm.model.JvmLibraryTarget;
@@ -28,6 +29,7 @@ public abstract class JvmBasePlugin implements Plugin<Project> {
             component.getFeatures().withType(JvmFeature.class).configureEach(feature -> {
                 feature.getTargets().configureEach(target -> {
                     target.getVariants().registerBinding(JvmRuntime.class, JvmRuntime.class);
+                    target.getVariants().registerBinding(JvmCompilation.class, JvmCompilation.class);
                 });
             });
         });
